@@ -4,8 +4,8 @@ services:
     image: mysql:5.7
     container_name: mysql
     environment:
-      - MYSQL_DATABASE=wordpress
-      - MYSQL_ROOT_PASSWORD=wordpress
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
     ports:
       - "3306:3306"
   wordpress-master:
@@ -13,12 +13,12 @@ services:
     build: .
     container_name: wordpress-development-master
     environment:
-      - WORDPRESS_DB_HOST=database:3306
-      - WORDPRESS_DATABASE_NAME=wordpress
-      - WORDPRESS_DATABASE_USER=root
-      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_HOST=$WORDPRESS_DB_HOST
+      - WORDPRESS_DATABASE_NAME=$WORDPRESS_DATABASE_NAME
+      - WORDPRESS_DATABASE_USER=$WORDPRESS_DATABASE_NAME
+      - WORDPRESS_DB_PASSWORD=$WORDPRESS_DB_PASSWORD
       - WORDPRESS_CONFIG_EXTRA=define('WP_CONTENT_URL', 'http://localhost:81/wp-content');
-      - CONTAINER_MODE=master
+      - CONTAINER_MODE=$CONTAINER_MODE_MASTER
     ports:
       - "81:80"
     command: supervisord --nodaemon -c /etc/supervisor/supervisord.conf
@@ -27,13 +27,13 @@ services:
     build: .
     container_name: wordpress-development-slave
     environment:
-      - WORDPRESS_DB_HOST=mysql:3306
-      - WORDPRESS_DATABASE_NAME=wordpress
-      - WORDPRESS_DATABASE_USER=root
-      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_HOST=$WORDPRESS_DB_HOST
+      - WORDPRESS_DATABASE_NAME=$WORDPRESS_DATABASE_NAME
+      - WORDPRESS_DATABASE_USER=$WORDPRESS_DATABASE_USER
+      - WORDPRESS_DB_PASSWORD=$WORDPRESS_DB_PASSWORD
       - WORDPRESS_CONFIG_EXTRA=define('WP_CONTENT_URL', 'http://localhost:82/wp-content');
-      - CONTAINER_MODE=slave
-      - RSYNC_WORDPRESS_MASTER=wordpress-master
+      - CONTAINER_MODE=$CONTAINER_MODE_SLAVE
+      - RSYNC_WORDPRESS_MASTER=$RSYNC_WORDPRESS_MASTER
     ports:
       - "82:80"
     command: supervisord --nodaemon -c /etc/supervisor/supervisord.conf
